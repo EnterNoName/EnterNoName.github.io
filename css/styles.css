@@ -71,4 +71,7 @@ div > button:hover{
         flex-direction: column;
         padding: 200px 0;
     }
+    div > button{
+        font-size: 0.9rem;
+    }
 }
