@@ -2,7 +2,7 @@
 *, *::after, *::before{
     box-sizing: border-box;
     font-family: 'Nanum Gothic', sans-serif;
-    font-size: 1.3rem;
+    font-size: 2.5vh;
 }
 
 body{
@@ -53,8 +53,11 @@ div > button{
     outline: none;
     cursor: pointer;
 
-    width: 6vh;
     text-align: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 div > button:hover{
@@ -69,9 +72,6 @@ div > button:hover{
 @media screen and (max-device-width: 740px) {
     .content{
         flex-direction: column;
-        padding: 200px 0;
-    }
-    div > button{
-        font-size: 0.9rem;
+        padding: 100px 0;
     }
 }
