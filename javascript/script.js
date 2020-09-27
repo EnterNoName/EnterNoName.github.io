@@ -99,6 +99,7 @@ function Convert(number, input_unit, output_unit) {
     if (result == 0) {
         return "";
     }
+
     else {
         result = +result.toFixed(3)
         return result;
