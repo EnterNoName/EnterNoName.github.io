@@ -1,4 +1,4 @@
-// Variebles
+// Variables
 
 const units = {
     mg_to_g: 0.001,
@@ -13,6 +13,8 @@ const output_buttons = document.querySelectorAll('.output > button');
 
 const input = document.querySelectorAll('.display')[0];
 const output = document.querySelectorAll('.display')[1];
+
+const clear_btn = document.querySelector('#clear');
 
 // Selector functions
 
@@ -52,53 +54,60 @@ function getInfo() {
 }
 
 function Convert(number, input_unit, output_unit) {
-    let step_one;
     let result;
     switch (input_unit) {
         case "g":
-            step_one = number;
+            result = number * 1;
             break;
         case "mg":
-            step_one = number * units.mg_to_g;
+            result = number * units.mg_to_g;
             break;
         case "kg":
-            step_one = number * units.kg_to_g;
+            result = number * units.kg_to_g;
             break;
         case "t":
-            step_one = number * units.t_to_g;
+            result = number * units.t_to_g;
             break;
         case "lbs":
-            step_one = number * units.lbs_to_g;
+            result = number * units.lbs_to_g;
             break;
         case "oz":
-            step_one = number * units.oz_to_g;
+            result = number * units.oz_to_g;
             break;
     }
 
     switch (output_unit) {
         case "g":
-            result = step_one;
             break;
         case "mg":
-            result = step_one / units.mg_to_g;
+            result = result / units.mg_to_g;
             break;
         case "kg":
-            result = step_one / units.kg_to_g;
+            result = result / units.kg_to_g;
             break;
         case "t":
-            result = step_one / units.t_to_g;
+            result = result / units.t_to_g;
             break;
         case "lbs":
-            result = step_one / units.lbs_to_g;
+            result = result / units.lbs_to_g;
             break;
         case "oz":
-            result = step_one / units.oz_to_g;
+            result = result / units.oz_to_g;
             break;
     }
 
     if (result == 0) {
         return "";
     }
-    else
-    return result.toFixed(3);
+    else {
+        result = +result.toFixed(3)
+        return result;
+    }
 }
+
+// Clear button
+
+clear_btn.addEventListener('click', ()=> {
+    input.value = '';
+    getInfo();
+})
