@@ -1,35 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&family=Roboto&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
-    <script src="javascript/script.js" defer></script>
-    <link rel="shortcut icon" href="images/favicon.ico">
-    <title>Конвертер весов</title>
+  <meta charset="UTF-8">
+  <title>TODO List</title>
 </head>
+
 <body>
-    <div class="content">
-        <div class="section input">
-            <input class="display" placeholder="Введите число..." autofocus type="number">
-            <button title="Миллиграммы">mg</button>
-            <button title="Граммы"class="checked">g</button>
-            <button title="Килограммы">kg</button>
-            <button title="Тонны">t</button>
-            <button title="Фунты">lbs</button>
-            <button title="Унции">oz</button>
-        </div>
-        <button id="clear">Очистить</button>
-        <div class="section output">
-            <input class="display" readonly placeholder="Результат...">
-            <button title="Миллиграммы">mg</button>
-            <button title="Граммы">g</button>
-            <button title="Килограммы" class="checked">kg</button>
-            <button title="Тонны">t</button>
-            <button title="Фунты">lbs</button>
-            <button title="Унции">oz</button>
-        </div>
+  <style>
+    html {
+      font-family: sans-serif;
+      background: #ffc600;
+    }
+    
+    .container {
+      max-width: 400px;
+      margin: 30px auto;
+    }
+    
+    .inbox {
+      background: white;
+      border-radius: 5px;
+      box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.1);
+    }
+    
+    .new-note {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #F1F1F1;
+    }
+
+    .item:last-child {
+      border-bottom: 0;
+    }
+
+
+    input:checked+p {
+      background: #F9F9F9;
+      text-decoration: line-through;
+    }
+
+    input[type="checkbox"] {
+      margin: 20px;
+    }
+
+    p {
+      margin: 0;
+      padding: 20px;
+      transition: background 0.2s;
+      flex: 1;
+      font-family: 'helvetica neue';
+      font-size: 20px;
+      font-weight: 200;
+      border-left: 1px solid #D1E2FF;
+    }
+    
+    #create {
+      background: #0075FF;
+      border-radius: 100%;
+      color: white;
+      border: none;
+      outline: none;
+      font-size: 20px;
+      
+      width: 41px;
+      height: 41px;
+      margin: 0 7px;
+      
+      box-shadow: 5px 10px 0px rgba(0, 0, 0, 0.1);
+    }
+    
+    #create:active {
+      background: #006be6;
+    }
+    
+    #delete {
+      position: absolute;
+      left: 105%;
+      width: 41px;
+      height: 41px;
+      
+      background: #fc1717;
+      border-radius: 100%;
+      color: white;
+      border: none;
+      outline: none;
+      font-size: 20px;
+      
+      box-shadow: 5px 10px 0px rgba(0, 0, 0, 0.1);
+      transition: transform .2s ease-in;
+      transform: translateY(-100px);
+    }
+    
+    input[type="text"] {
+      font-family: 'helvetica neue';
+      font-size: 18px;
+      font-weight: 200;
+      
+      outline: none;
+      border: none;
+      border-radius: 100px;
+      padding: 10px;
+      flex: 1;
+      
+      box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.1);
+    }
+
+  </style>
+  <!--
+   The following is a common layout you would see in an email client.
+
+   When a user clicks a checkbox, holds Shift, and then clicks another checkbox a few rows down, all the checkboxes in-between those two checkboxes should be checked.
+
+  -->
+  <div class="container new-note">
+    <button id="create">+</button> <input type="text"> <button id="delete">-</button>
+  </div> 
+  <div class="inbox container">
+    <div class="item">
+      <input type="checkbox">
+      <p>Write in the field above to add tasks!</p>
     </div>
+  </div>
+  <script>
+    const createBtn = document.querySelector('#create');
+    const deleteBtn = document.querySelector('#delete');
+    const textField = document.querySelector('input[type="text"]');
+    const notes = document.querySelector('.inbox');
+    let checkboxes = document.querySelectorAll('.inbox input[type="checkbox"]'),
+        lastChecked,
+        checked;
+    
+    if(localStorage.getItem('notes')) notes.innerHTML = localStorage.getItem('notes');
+    if(localStorage.getItem('checked')) initializeChecked();
+    
+    function initializeChecked() {
+      let checkedIndex = localStorage.getItem('checked');
+      for(let i of checkedIndex) {
+        notes.childNodes[i].firstChild.checked = true;
+      }
+      checked = document.querySelectorAll('input[type="checkbox"]:checked');
+      showDeleteBtn();
+    }
+    
+    function handleCheck(e) {
+      // Check if they had the shift key down
+      // AND check that they are checking it
+      let inBetween = false;
+      if (e.shiftKey && this.checked) {
+        // go ahead and do what we please
+        // loop over every single checkbox
+        checkboxes.forEach(checkbox => {
+          if (checkbox === this || checkbox === lastChecked) {
+            inBetween = !inBetween;
+          }
+
+          if (inBetween) {
+            checkbox.checked = true;
+          }
+        });
+      }
+      
+      showDeleteBtn();
+      lastChecked = this;
+      
+      let value = '';
+      checked.forEach(elem => {
+        value += Array.from(notes.childNodes).indexOf(elem.parentNode);
+      })
+      localStorage.setItem('checked', value);
+    }
+    
+    function showDeleteBtn() {
+      // Show delete button if something's checked
+      // And remove if isn't
+      checked = document.querySelectorAll('input[type="checkbox"]:checked');
+      if(checked.length > 0) {
+        deleteBtn.style.transform = 'translateY(0px)';
+      } else {
+        deleteBtn.style.transform = 'translateY(-100px)';
+      }
+    }
+    
+    function addNote() {
+      if(textField.value) {
+        let newNote = document.createElement('div')
+        newNote.classList.add('item')
+        newNote.innerHTML =
+          `<input type="checkbox">
+          <p>${textField.value}</p>`;
+        notes.appendChild(newNote)
+        textField.value = '';
+        
+        checkboxes = document.querySelectorAll('.inbox input[type="checkbox"]');
+        checkboxes.forEach(checkbox => checkbox.addEventListener('click', handleCheck));
+        localStorage.setItem('notes', notes.innerHTML);
+      }
+    }
+    
+    function deleteNotes() {
+      checked.forEach(elem => {
+        elem.parentNode.remove();
+      })
+      
+      deleteBtn.style.transform = 'translateY(-100px)';
+      localStorage.setItem('notes', notes.innerHTML);
+      localStorage.setItem('checked', '');
+    }
+    
+    deleteBtn.addEventListener('click', deleteNotes);
+    createBtn.addEventListener('click', addNote);
+    textField.addEventListener('keydown', e => {if(e.key == "Enter") addNote()});
+    checkboxes.forEach(checkbox => checkbox.addEventListener('click', handleCheck));
+
+  </script>
 </body>
+
 </html>
