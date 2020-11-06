@@ -112,6 +112,14 @@
       
       box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.1);
     }
+    
+    @media (max-width: 500px) {
+      .container {
+        max-width: 500px;
+        margin: 50px auto;
+        transform: scale(1.3)
+      }
+    }
 
   </style>
   <!--
@@ -124,10 +132,6 @@
     <button id="create">+</button> <input type="text"> <button id="delete">-</button>
   </div> 
   <div class="inbox container">
-    <div class="item">
-      <input type="checkbox">
-      <p>Write in the field above to add tasks!</p>
-    </div>
   </div>
   <script>
     const createBtn = document.querySelector('#create');
@@ -137,9 +141,11 @@
     let checkboxes = document.querySelectorAll('.inbox input[type="checkbox"]'),
         lastChecked,
         checked;
-    
+   
     if(localStorage.getItem('notes')) notes.innerHTML = localStorage.getItem('notes');
     if(localStorage.getItem('checked')) initializeChecked();
+    
+    checkboxes = document.querySelectorAll('.inbox input[type="checkbox"]')
     
     function initializeChecked() {
       let checkedIndex = localStorage.getItem('checked');
