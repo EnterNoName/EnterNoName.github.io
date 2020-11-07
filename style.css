@@ -199,8 +199,3 @@ footer {
     transform: scale(0.8);
   }
 }
-@media all and (max-height: 660px) and (max-width: 480px) {
-  #delete-note {
-    bottom: 4vh;
-  }
-}
