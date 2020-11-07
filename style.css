@@ -198,4 +198,7 @@ footer {
   .footer-item input, select {
     transform: scale(0.8);
   }
+  .notes {
+    max-height: 68vh;
+  }
 }
