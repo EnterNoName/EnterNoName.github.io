@@ -161,6 +161,12 @@ recognition.lang = 'en_US';
 const speechBtn = document.querySelector('#speech');
 
 speechBtn.addEventListener('click', () => {
+    if(document.querySelectorAll('.speech-to-text') != null) {
+      document.querySelectorAll('.speech-to-text').forEach(elem => {
+        elem.remove();
+      });
+      updateValues();
+    }
     let speechNote = document.createElement('div');
     speechNote.classList.add('item', 'speech-to-text');
     speechNote.innerHTML =
