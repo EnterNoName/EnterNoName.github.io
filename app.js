@@ -182,6 +182,7 @@ recognition.addEventListener('result', e => {
     `<input type="checkbox">
     <p>${text}</p>`;
 
+  // Stop speech recognition if the speaker stoped
   if(e.results[0].isFinal) {
     speechNote.classList.remove('speech-to-text')
     recognition.stop();
@@ -212,10 +213,12 @@ function storageSave() {
 if(localStorage.length > 0) {
   notesList.innerHTML = localStorage.getItem('notes');
   let [indexes, color, l, lang] = [...localStorage.getItem('state').split(':')]
+  // Select previous page color
   if(color != '') {
     document.documentElement.style.setProperty(`--color`, color);
     document.documentElement.style.setProperty(`--l`, l);
   }
+  // Restore previous checked checkboxed
   if(indexes != '') {
     indexes.split(',').forEach(i => {
       if(i) {
@@ -223,6 +226,7 @@ if(localStorage.length > 0) {
       }
     });
   }
+  // Select previously selected speech to text language
   if(lang != '') {
     recognition.lang = lang;
     langSwitch.value = lang;
