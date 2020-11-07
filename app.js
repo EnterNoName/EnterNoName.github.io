@@ -76,13 +76,11 @@ function updateValues() {
   }
   
   let tempValue = '';
-  checkboxes.forEach(checkbox => {
-    if(checkbox.checked) {
-      for(let i = 0;i < notesList.childNodes.length;i++) {
-        if(notesList.childNodes[i].firstElementChild == checkbox) tempValue += i;
-      }
-    }
-  });
+  checked.forEach(checkbox => {
+    let i = Array.from(notesList.childNodes).map(item => item.firstChild).indexOf(checkbox);
+    tempValue += i + ',';
+  })
+
   checkedIndex = tempValue;
   storageSave();
 }
@@ -157,15 +155,12 @@ clearBtn.addEventListener('click', () => noteInput.value = '');
 // Speech recongition note creation
 window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
-recognition.continuous = true;
 recognition.interimResults = true;
 recognition.lang = 'en_US';
 
-let speechOn = false;
 const speechBtn = document.querySelector('#speech');
 
 speechBtn.addEventListener('click', () => {
-  if(!speechOn) {
     let speechNote = document.createElement('div');
     speechNote.classList.add('item', 'speech-to-text');
     speechNote.innerHTML =
@@ -174,18 +169,7 @@ speechBtn.addEventListener('click', () => {
     notesList.appendChild(speechNote);
     speechNote.scrollIntoView({block: 'center', behavior: 'smooth'});
 
-    speechOn = !speechOn;
     recognition.start();
-  } else {
-    let speechNote = document.querySelector('.speech-to-text');
-
-    if(speechNote.lastChild.textContent == "Talk...") {speechNote.remove()}
-    else {speechNote.classList.remove('speech-to-text')}
-
-    speechOn = !speechOn;
-    recognition.stop();
-    updateValues();
-  }
 });
 
 recognition.addEventListener('result', e => {
@@ -197,6 +181,12 @@ recognition.addEventListener('result', e => {
   speechNote.innerHTML =
     `<input type="checkbox">
     <p>${text}</p>`;
+
+  if(e.results[0].isFinal) {
+    speechNote.classList.remove('speech-to-text')
+    recognition.stop();
+    updateValues();
+  }
 });
 
 
@@ -227,9 +217,11 @@ if(localStorage.length > 0) {
     document.documentElement.style.setProperty(`--l`, l);
   }
   if(indexes != '') {
-    for(let n of indexes) {
-      notesList.childNodes[n].firstChild.checked = true
-    }
+    indexes.split(',').forEach(i => {
+      if(i) {
+        notesList.childNodes[i].firstChild.checked = true;
+      }
+    });
   }
   if(lang != '') {
     recognition.lang = lang;
