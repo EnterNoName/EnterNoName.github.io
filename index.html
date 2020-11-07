@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="icons/css/all.css">
+  <link rel="stylesheet" href="icons/css/solid.css">
+  <link rel="icon" href="images/favicon.png">
+  <script src="app.js" defer></script>
+  <title>ToDo List</title>
+</head>
+<body>
+  <div class="content">
+    <div class="container">
+       <div class="new-note">
+         <div id="text-field">
+           <input id="note-text" type="text" spellcheck="true">
+           <button id="erase-field"><i class="fas  fa-times"></i></button>
+         </div>
+          <button class="note-button" id="speech"><i class="fas fa-microphone"></i></button>
+          <button class="note-button" id="add-note"><i class="fas fa-plus-circle"></i></button>
+       </div>
+       <div class="notes"><div class="item"><input type="checkbox"><p>Write your tasks in the field above!</p></div><div class="item"><input type="checkbox"><p>Check multiple checkboxes with click => shift-click.</p></div></div>
+    </div>
+    <button id="delete-note"><i class="fas fa-trash-alt"></i></button>
+  </div>
+  <footer>
+   <div class="footer-item">
+    <p>Page color doesn't suit you? Pick your own!</p>
+    <input type="color" value="#ffffff">
+   </div>
+    <div class="footer-item">
+      <p>Speech recognition language:</p>
+      <select>
+        <option value="en_US">English</option>
+        <option value="ru_RU">Русский</option>
+      </select>
+    </div>
+  </footer>
+</body>
+</html>
