@@ -22,7 +22,7 @@ function updateHeight() {
 document.querySelectorAll('.list-label').forEach(label => label.addEventListener('click', function() {
     this.classList.toggle('active');
     localStorage.setItem(this.htmlFor, this.classList[1] ? true : '');
-    updateHeight()
+    updateHeight();
 }));
 
 // Adding items
@@ -61,7 +61,8 @@ function appendLists(items = [], done = false) {
           </li>
         `;
       }).join('');
-      updateDeleteBtn()
+      updateDeleteBtn();
+      updateHeight();
       document.querySelectorAll('li').forEach(item => item.addEventListener('dragstart', dragStart))
 }
 
@@ -237,6 +238,7 @@ function recognitionStart() {
   todoList.insertAdjacentElement('beforeend', newTask);
   newTask.addEventListener('click', e => e.preventDefault())
 
+  updateHeight();
   recognition.start();
 }
 
@@ -252,7 +254,8 @@ function recognitionEnd() {
   const newTask = document.querySelector('#sr');
   const text = newTask.children[1].textContent;
   if(text == 'Talk...') {
-    newTask.remove()
+    newTask.remove();
+    updateHeight();
     return;
   }
   newTask.id = undefined;
@@ -299,4 +302,5 @@ if(localStorage.getItem('todo') == null) {
 }
 
 restoreValues();
+updateHeight();
 appendLists(items);

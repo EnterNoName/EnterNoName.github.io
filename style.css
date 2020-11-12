@@ -273,7 +273,6 @@ footer {
 .footer-item {
     margin: 1.5vh 10px;
     display: flex;
-    justify-content: flex-start;
     align-items: center;
     flex-wrap: nowrap;
 }
@@ -282,6 +281,7 @@ footer {
     box-sizing: content-box;
     display: inline-block;
     width: fit-content;
+    flex: 1 0 0;
 }
 
 .footer-item input, select {
@@ -313,14 +313,25 @@ footer {
         .footer-label {
             font-size: 12px;
         }
+        .footer-item input, select {
+            transform: scale(0.9);
+        }
     }
-    @media all and (max-height: 680px) {
+    @media all and (max-height: 730px) {
         section {
             max-height: 68vh;
         }
         .footer-label {
             font-size: 10px;
         }
+        .footer-item input, select {
+            transform: scale(0.7);
+        }
+    }
+    @media all and (max-height: 570px) {
+        section {
+            max-height: 64vh;
+        } 
     }
 }
 
