@@ -294,5 +294,7 @@ function restoreValues() {
   recognition.lang = srLangSwitch.value;
 }
 
+if(localStorage.getItem('todo') == null) todoList.classList.add('active');
+
 restoreValues();
 appendLists(items);
