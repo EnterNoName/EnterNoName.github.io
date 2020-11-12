@@ -1,43 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="icons/css/all.css">
-  <link rel="stylesheet" href="icons/css/solid.css">
-  <link rel="icon" href="images/favicon.png">
-  <script src="app.js" defer></script>
-  <title>ToDo List</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/icons/css/all.css">
+    <link rel="stylesheet" href="assets/icons/css/regular.css">
+    <link rel="stylesheet" href="assets/icons/css/solid.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+    <link rel="icon" href="assets/images/favicon.png">
+    <script src="app.js" defer></script>
+    <title>ToDo List</title>
 </head>
 <body>
-  <div class="content">
-    <div class="container">
-       <div class="new-note">
-         <div id="text-field">
-           <input id="note-text" type="text" spellcheck="true">
-           <button id="erase-field"><i class="fas  fa-times"></i></button>
-         </div>
-          <button class="note-button" id="speech"><i class="fas fa-microphone"></i></button>
-          <button class="note-button" id="add-note"><i class="fas fa-plus-circle"></i></button>
-       </div>
-       <div class="notes"><div class="item"><input type="checkbox"><p>Write your tasks in the field above!</p></div><div class="item"><input type="checkbox"><p>Check multiple checkboxes with click => shift-click.</p></div></div>
+    <div id="content">
+        <form autocomplete="on" id="create-task">
+            <div id="create-task-inner">
+                <input id="input-field" type="text" spellcheck="true" placeholder="Write a new task..." required pattern="^\S+.*">
+                <button type="reset" class="input-btn"><i class="fas fa-times"></i></button>
+                <button id="speech-recognition" class="input-btn" type="button"><i class="fas fa-microphone"></i></button>
+            </div>
+            <button type="submit"><i class="fas fa-plus"></i></button>
+        </form>
+        <section>
+            <label for="todo" class="list-label active">ToDo <i class="fas fa-angle-right"></i></label>
+            <ul id="todo">
+                <li draggable="true">
+                    <input type="checkbox" data-index=0 id="item-0">
+                    <label for="item-0">Make your first task!</label>
+                </li>
+            </ul>
+            <label for="done" class="list-label">Done <i class="fas fa-angle-right"></i></label>
+            <ul id="done">
+            </ul>
+            <button id="clear-done">Delete all</button>
+        </section>
     </div>
-    <button id="delete-note"><i class="fas fa-trash-alt"></i></button>
-  </div>
-  <footer>
-   <div class="footer-item">
-    <p>Page color doesn't suit you? Pick your own!</p>
-    <input type="color" value="#ffffff">
-   </div>
-    <div class="footer-item">
-      <p>Speech recognition language:</p>
-      <select>
-        <option value="en_US">English</option>
-        <option value="ru_RU">Русский</option>
-      </select>
-    </div>
-  </footer>
+    <footer>
+        <div class="footer-item">
+            <span class="footer-label">Page color doesn't suit you? Pick your own!</span>
+            <input id="color-picker" type="color" value="#ffffff">
+        </div>
+        <div class="footer-item">
+            <span class="footer-label">Speech recognition language:</span>
+            <select name="recognition-laguage" id="lang-switch">
+                <option value="en_US">EN</option>
+                <option value="fr_FR">FR</option>
+                <option value="ru_RU">RU</option>
+            </select>
+        </div>
+    </footer>
 </body>
 </html>

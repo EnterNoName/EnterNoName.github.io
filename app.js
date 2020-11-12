@@ -1,96 +1,176 @@
-// Shift checking
-let checkboxes = document.querySelectorAll('.item input[type="checkbox"]'),
-    checked = document.querySelectorAll('.item input[type="checkbox"]:checked'),
-    checkedIndex,
-    lastChecked;
+// Important variables declaration
+let items = JSON.parse(localStorage.getItem('items')) || [{text: 'Make your first task!', done: false}];
+const todoList = document.querySelector('#todo');
+const doneList = document.querySelector('#done');
+let deleteButtons = document.querySelectorAll(".delete");
 
-function handleChecking(e) {
-  if(this.checked && e.shiftKey) {
-  let between = false;
-    checkboxes.forEach(checkbox => {
-      if(checkbox == this || checkbox == lastChecked) between = !between;
-      if(between) checkbox.checked = true;
-    });
-  }
-  
-  updateValues()
-  
-  lastChecked = this;
+// Setting the height for the grid
+const section = document.querySelector('section');
+const maxHeight = getComputedStyle(section).maxHeight;
+
+const maxHeightVH = pxToVH(maxHeight.match(/\d*\.?\d*/));
+function pxToVH(px, padding = 0) {
+    return (px - padding) * (100 / document.documentElement.clientHeight);
 }
 
-checkboxes.forEach(checkbox => checkbox.addEventListener('click', handleChecking));
-
-
-
-// Create new note
-const createNoteBtn = document.querySelector('#add-note');
-const notesList = document.querySelector('.notes');
-const noteInput = document.querySelector('#note-text');
-// Note creation function
-function createNote() {
-  if(noteInput.value == '') return;
-  
-  let newNote = document.createElement('div');
-  newNote.classList.add('item');
-  newNote.innerHTML =
-    `<input type="checkbox">
-     <p>${noteInput.value}</p>`
-  notesList.appendChild(newNote);
-  noteInput.value = '';
-  
-  updateValues();
+function updateHeight() {
+    section.style.height = 'auto';
+    section.style.height = pxToVH(section.scrollHeight) > maxHeightVH ? maxHeightVH + 'vh' : 'auto';
 }
-// Create note triggers
-createNoteBtn.addEventListener('click', createNote);
-noteInput.addEventListener('keydown', e => {
-  if(e.key == 'Enter') createNote();
-});
 
+// List opening
+document.querySelectorAll('.list-label').forEach(label => label.addEventListener('click', function() {
+    this.classList.toggle('active');
+    localStorage.setItem(this.htmlFor, this.classList[1] ? true : '');
+    updateHeight()
+}));
 
+// Adding items
+const createForm = document.querySelector('#create-task');
 
-// Delete note
-const deleteNoteBtn = document.querySelector('#delete-note');
+function addItem(e) {
+    e.preventDefault();
+    const text = this.querySelector('#input-field').value;
+    const item = {
+        text,
+        done: false
+    }
+    items.push(item);
+    localStorage.setItem('items', JSON.stringify(items));
+    appendLists(items);
+    this.reset();
+}
 
-function deleteNotes() {
-  checkboxes.forEach(checkbox => {
-    if(checkbox.checked) {
-      checkbox.parentNode.remove();
+function appendLists(items = [], done = false) {
+    todoList.innerHTML = items.map((item,i) => {
+        if(item.done != done) return;
+        return  `
+          <li draggable="true">
+            <input type="checkbox" data-index=${i} id="item-${i}">
+            <label for="item-${i}">${parseText(item.text)}</label>
+          </li>
+        `;
+      }).join('');
+    doneList.innerHTML = items.map((item,i) => {
+        if(item.done == done) return;
+        return  `
+          <li draggable="true">
+            <input type="checkbox" data-index=${i} id="item-${i}" checked>
+            <label for="item-${i}">${parseText(item.text)}</label>
+            <button class="delete" data-index="${i}"><i class="fas fa-trash-alt"></i></button>
+          </li>
+        `;
+      }).join('');
+      updateDeleteBtn()
+      document.querySelectorAll('li').forEach(item => item.addEventListener('dragstart', dragStart))
+}
+
+function parseText(str) {
+  return str.replace(/[&<>'"]/gm, match => {
+    switch(match) {
+      case '&':
+        return '&amp;'
+      case '<':
+        return '&lt;'
+      case '>':
+        return '&gt;'
+      case "''":
+        return '&apos;'
+      case '""':
+        return '&quot;'
     }
   });
-  updateValues();
 }
 
-deleteNoteBtn.addEventListener('click', deleteNotes);
+createForm.addEventListener('submit', addItem);
 
-
-
-// Value updates
-function updateValues() {
-  checkboxes = document.querySelectorAll('.item input[type="checkbox"]');
-  checkboxes.forEach(checkbox => checkbox.addEventListener('click', handleChecking));
-  checked = document.querySelectorAll('.item input[type="checkbox"]:checked');
-  if(checked.length > 0) {
-    deleteNoteBtn.style.display = 'block';
-  } else {
-    deleteNoteBtn.style.display = 'none';
-  }
-  
-  let tempValue = '';
-  checked.forEach(checkbox => {
-    let i = Array.from(notesList.childNodes).map(item => item.firstChild).indexOf(checkbox);
-    tempValue += i + ',';
-  })
-
-  checkedIndex = tempValue;
-  storageSave();
+// Toggle done
+function toggleDone(e) {
+    if(!e.target.matches('input')) return;
+    const index = e.target.dataset.index;
+    items[index].done = !items[index].done;
+    
+    localStorage.setItem('items', JSON.stringify(items));
+    appendLists(items);
+    updateDeleteBtn();
 }
-//checkbox.parentElement
 
+todoList.addEventListener('click', toggleDone);
+doneList.addEventListener('click', toggleDone);
 
-// Color selection
-const colorPick = document.querySelector('.footer-item input[type="color"]');
-colorPick.addEventListener('change', changeColor);
-// Color convertion HEX to HSL
+// Deleting elements
+const deleteAll = document.querySelector('#clear-done');
+
+function deleteItem() {
+    items.splice(this.dataset.index,1);
+    localStorage.setItem('items', JSON.stringify(items));
+    this.parentNode.remove();
+    appendLists(items);
+}
+
+function updateDeleteBtn() {
+    deleteButtons = document.querySelectorAll(".delete");
+    deleteButtons.forEach(button => button.addEventListener('click', deleteItem));
+}
+
+deleteAll.addEventListener('click', () => {
+    const agree = confirm('Are you sure you want to delete all of the done tasks?');
+    if(agree) {
+        items = items.filter(item => !item.done);
+        localStorage.setItem('items', JSON.stringify(items));
+        doneList.innerHTML = '';
+        appendLists(items);
+    }
+});
+
+// Drag and Drop
+function dragStart(e) {
+    e.dataTransfer.setData('id', e.target.children[0].id);
+    console.log(e.target.children[0].id)
+}
+
+function dragOver(e) {
+    e.preventDefault();
+}
+
+function drop(e) {
+    const id = e.dataTransfer.getData('id');
+    const elem = document.getElementById(id);
+    const index = elem.dataset.index;
+    const target =  document.getElementById(this.htmlFor) || this;
+    target.append(elem.parentNode);
+
+    if(target == doneList) {
+      elem.checked = true;
+      items[index].done = true;
+    } else {
+      elem.checked = false;
+      items[index].done = false;
+    }
+
+    localStorage.setItem('items', JSON.stringify(items));
+    appendLists(items);
+    updateDeleteBtn();
+}
+
+document.querySelectorAll('ul').forEach(ul => ul.addEventListener('drop', drop));
+document.querySelectorAll('ul').forEach(ul => ul.addEventListener('dragover', dragOver));
+
+document.querySelectorAll('.list-label')
+    .forEach(label => label.addEventListener('dragover', dragOver))
+document.querySelectorAll('.list-label')
+    .forEach(label => label.addEventListener('drop', drop))
+
+// Change page color
+const colorPicker = document.querySelector('#color-picker');
+
+function changeColor() {
+  let [hue, sat, light] = [...hexToHSL(this.value).split(' ')];
+  document.documentElement.style.setProperty(`--color`, `${hue}, ${sat}`);
+  document.documentElement.style.setProperty(`--l`, `${light}`);
+  localStorage.setItem('color', JSON.stringify([hue,sat,light]));
+}
+
 function hexToHSL(H) {
   // Convert hex to RGB first
   let r = 0, g = 0, b = 0;
@@ -135,109 +215,84 @@ function hexToHSL(H) {
 
   return `${h} ${s}% ${l}%`;
 }
-// Color changing fuction
-function changeColor() {
-  let [hue, sat, light] = [...hexToHSL(this.value).split(' ')];
-  document.documentElement.style.setProperty(`--color`, `${hue}, ${sat}`);
-  document.documentElement.style.setProperty(`--l`, `${light}`);
-  updateValues();
-}
 
+colorPicker.addEventListener('change', changeColor);
 
-
-// Erase the value of the input field
-const clearBtn = document.querySelector('#erase-field');
-
-clearBtn.addEventListener('click', () => noteInput.value = '');
-
-
-
-// Speech recongition note creation
+// Speech recognition
 window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
+const srLangSwitch = document.querySelector('#lang-switch');
+const startRecognition = document.querySelector('#speech-recognition');
+
 recognition.interimResults = true;
-recognition.lang = 'en_US';
 
-const speechBtn = document.querySelector('#speech');
+function recognitionStart() {
+  const i = items.length;
+  const newTask = document.querySelector('#sr') || document.createElement('li');
+  newTask.id = 'sr';
+  newTask.innerHTML = `
+  <input type="checkbox" data-index=${i} id="item-${i}">
+  <label for="item-${i}">Talk...</label>
+  `
+  todoList.insertAdjacentElement('beforeend', newTask);
+  newTask.addEventListener('click', e => e.preventDefault())
 
-speechBtn.addEventListener('click', () => {
-    if(document.querySelectorAll('.speech-to-text') != null) {
-      document.querySelectorAll('.speech-to-text').forEach(elem => {
-        elem.remove();
-      });
-      updateValues();
-    }
-    let speechNote = document.createElement('div');
-    speechNote.classList.add('item', 'speech-to-text');
-    speechNote.innerHTML =
-      `<input type="checkbox">
-      <p style="color: #808080">Talk...</p>`
-    notesList.appendChild(speechNote);
-    speechNote.scrollIntoView({block: 'center', behavior: 'smooth'});
+  recognition.start();
+}
 
-    recognition.start();
-});
-
-recognition.addEventListener('result', e => {
+function enterResult(e) {
+  const newTask = document.querySelector('#sr');
   const text = Array.from(e.results)
     .map(result => result[0].transcript)
     .join('');
-  
-  let speechNote = document.querySelector('.speech-to-text');
-  speechNote.innerHTML =
-    `<input type="checkbox">
-    <p>${text}</p>`;
+  newTask.children[1].textContent = parseText(text);
+}
 
-  // Stop speech recognition if the speaker stoped
-  if(e.results[0].isFinal) {
-    speechNote.classList.remove('speech-to-text')
-    recognition.stop();
-    updateValues();
+function recognitionEnd() {
+  const newTask = document.querySelector('#sr');
+  const text = newTask.children[1].textContent;
+  if(text == 'Talk...') {
+    newTask.remove()
+    return;
   }
-});
+  newTask.id = undefined;
+  newTask.draggable = true;
+  const item = {
+      text,
+      done: false
+  }
+  items.push(item);
+  localStorage.setItem('items', JSON.stringify(items));
+}
 
-
-
-// Speech recognition language selection
-const langSwitch = document.querySelector('.footer-item select');
-langSwitch.addEventListener('change', function() {
+function changeSrLang() {
   recognition.lang = this.value;
-  updateValues();
-});
-
-
-
-// LocalStorage make a save
-function storageSave() {
-  localStorage.setItem('notes', notesList.innerHTML);
-  localStorage.setItem('state', `${checkedIndex}:${document.documentElement.style.getPropertyValue('--color')}:${document.documentElement.style.getPropertyValue('--l')}:${langSwitch.value}`);
+  localStorage.setItem('srLang', this.value);
 }
 
+startRecognition.addEventListener('click', recognitionStart);
+recognition.addEventListener('result', enterResult);
+recognition.addEventListener('speechend', recognitionEnd);
+srLangSwitch.addEventListener('change', changeSrLang)
 
-
-// Restore previous state
-if(localStorage.length > 0) {
-  notesList.innerHTML = localStorage.getItem('notes');
-  let [indexes, color, l, lang] = [...localStorage.getItem('state').split(':')]
-  // Select previous page color
-  if(color != '') {
-    document.documentElement.style.setProperty(`--color`, color);
-    document.documentElement.style.setProperty(`--l`, l);
+// Restore from localStorage
+function restoreValues() {
+  document.querySelectorAll('.list-label').forEach(label => {
+    if(localStorage.getItem(label.htmlFor)) {
+      label.classList.toggle('active');
+    }
+  });
+  const color = JSON.parse(localStorage.getItem('color'));
+  if(color) {
+    document.documentElement.style.setProperty(`--color`, `${color[0]}, ${color[1]}`);
+    document.documentElement.style.setProperty(`--l`, `${color[2]}`);
   }
-  // Restore previous checked checkboxed
-  if(indexes != '') {
-    indexes.split(',').forEach(i => {
-      if(i) {
-        notesList.childNodes[i].firstChild.checked = true;
-      }
-    });
+  const srLang = localStorage.getItem('srLang');
+  if(srLang) {
+    srLangSwitch.value = srLang;
   }
-  // Select previously selected speech to text language
-  if(lang != '') {
-    recognition.lang = lang;
-    langSwitch.value = lang;
-    updateValues();
-  }
+  recognition.lang = srLangSwitch.value;
 }
 
-updateValues();
+restoreValues();
+appendLists(items);
