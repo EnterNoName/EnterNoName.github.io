@@ -294,7 +294,9 @@ function restoreValues() {
   recognition.lang = srLangSwitch.value;
 }
 
-if(localStorage.getItem('todo') == null) todoList.classList.add('active');
+if(localStorage.getItem('todo') == null) {
+  document.querySelector('label[for="todo"]').classList.add('active');
+}
 
 restoreValues();
 appendLists(items);
