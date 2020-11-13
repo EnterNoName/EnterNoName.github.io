@@ -285,15 +285,21 @@ footer {
 }
 
 .footer-item input, select {
+    max-width: 44px;
     margin-left: 10px;
     border-radius: 100px;
     border: none;
+    flex: 0 1 40px;
 }
 
 /* Media tags */
 @media all and (max-width: 700px) {
     * {
         font-size: 14px;
+    }
+    #create-task button[type="submit"] {
+        height: 31px;
+        width: 31px;
     }
     li input[type="checkbox"] {
         margin: 15px;
@@ -306,32 +312,60 @@ footer {
     #content {
         width: 88vw;
     }
+    .footer-item input, select {
+        margin-left: 5px;
+        flex-basis: 20px;
+        max-height: 19px;
+    }
     @media all and (max-height: 840px) {
+        * {
+            font-size: 12px;
+        }
+        #create-task button[type="submit"] {
+            height: 29px;
+            width: 29px;
+        }
         section {
             max-height: 72vh;
         }
-        .footer-label {
-            font-size: 12px;
-        }
-        .footer-item input, select {
+        .footer-item select {
             transform: scale(0.9);
+        }
+        .footer-item {
+            margin: 1vh 10px;
         }
     }
     @media all and (max-height: 730px) {
+        * {
+            font-size: 11px;
+        }
         section {
             max-height: 68vh;
         }
-        .footer-label {
-            font-size: 10px;
+        li input[type="checkbox"] {
+            margin: 12px;
+            width: 13px;
+            height: 13px;
         }
-        .footer-item input, select {
-            transform: scale(0.7);
+        li label {
+            padding: 12px;
         }
     }
-    @media all and (max-height: 570px) {
+    @media all and (max-height: 560px) {
         section {
             max-height: 64vh;
         } 
+    }
+    @media all and (max-height: 480px) {
+        section {
+            max-height: 62vh;
+        } 
+        .footer-label {
+            font-size: 10px;
+        }
+        .footer-item select {
+            transform: scale(0.8);
+        }
     }
 }
 
