@@ -298,7 +298,7 @@ footer input, footer select {
     border-radius: 100px;
 }
 footer.open {
-    transform: translateX(0);
+    transform: translateX(200%);
 }
 footer.open + #close-open{
     left: 10px;
@@ -354,7 +354,8 @@ footer.open + #close-open{
 }
 @media all and (max-width: 665px) {
     footer {
-        transform: translateX(-150%);
+        position: absolute;
+        left: -100%;
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
@@ -367,9 +368,11 @@ footer.open + #close-open{
     #close-open {
         display: block;
     }
+    .footer-item {
+        padding: 5px;
+    }
     .footer-item:first-of-type {
         border-bottom: 1px solid white;
-        padding-bottom: 5px;
     }
 }
 @media all and (max-width: 320px) {
