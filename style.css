@@ -357,7 +357,7 @@ footer.open + #close-open{
         transform: translateX(-150%);
         flex-direction: column;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
         max-width: 50%;
         height: 100%;
         background-color: var(--color-primary);
