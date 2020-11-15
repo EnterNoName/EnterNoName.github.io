@@ -18,6 +18,19 @@ function updateHeight() {
     section.style.height = pxToVH(section.scrollHeight) > maxHeightVH ? maxHeightVH + 'vh' : 'auto';
 }
 
+// Open footer
+const footerBtn = document.querySelector('#close-open');
+const footer =  document.querySelector('footer');
+footerBtn.addEventListener('click', () => {
+  if(footer.classList.contains('open')) {
+    footer.classList.remove('open');
+    footerBtn.innerHTML = `<i class="fas fa-bars"></i>`;
+  } else {
+    footer.classList.add('open');
+    footerBtn.innerHTML = `<i class="fas fa-times"></i>`;
+  }
+});
+
 // List opening
 document.querySelectorAll('.list-label').forEach(label => label.addEventListener('click', function() {
     this.classList.toggle('active');
@@ -26,7 +39,7 @@ document.querySelectorAll('.list-label').forEach(label => label.addEventListener
 }));
 
 // Adding items
-const createForm = document.querySelector('#create-task');
+const createForm = document.querySelector('form');
 
 function addItem(e) {
     e.preventDefault();
@@ -37,6 +50,7 @@ function addItem(e) {
     }
     items.push(item);
     localStorage.setItem('items', JSON.stringify(items));
+    document.querySelector('label[for="todo"]').classList.add('active');
     appendLists(items);
     this.reset();
 }
@@ -127,7 +141,6 @@ deleteAll.addEventListener('click', () => {
 // Drag and Drop
 function dragStart(e) {
     e.dataTransfer.setData('id', e.target.children[0].id);
-    console.log(e.target.children[0].id)
 }
 
 function dragOver(e) {
@@ -238,6 +251,7 @@ function recognitionStart() {
   todoList.insertAdjacentElement('beforeend', newTask);
   newTask.addEventListener('click', e => e.preventDefault())
 
+  newTask.scrollIntoView({block: "center", behavior: "smooth"});
   updateHeight();
   recognition.start();
 }
