@@ -339,7 +339,7 @@ footer.open + #close-open{
     :root {
         --checkbox-size: 24px;
     }
-    @media all and (max-height: 650px) {
+    @media all and (max-height: 660px) {
         :root {
             --checkbox-size: 19px;
         }
@@ -351,7 +351,7 @@ footer.open + #close-open{
             height: 32px;
         }
     }
-    @media all and (max-height: 500px) {
+    @media all and (max-height: 590px) {
         section {
             max-height: 72vh;
         }
